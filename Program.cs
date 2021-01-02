@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-
 namespace Projekt_G6
 {
     class Program
     {
-        static List<BlogPost> posts = new List<BlogPost>();
-        static List<BlogPost> objs = new List<BlogPost>();
+        static List<BlogPost> Posts;
         static void Main(string[] args)
         {
             Console.WriteLine("Hej och välkommen till Blogg-verktyget! ");
-            Console.WriteLine("Välj i menyn vad du vill göra genom att ange siffran för ditt val följt av enter.");
+            Console.WriteLine("Välj i menyn vad du vill göra genom att ange siffran för ditt val följt av enter.\n ");
  
             CreateOrReadFile();
 
@@ -30,6 +26,7 @@ namespace Projekt_G6
                 Console.WriteLine("2 - Se tidigare blogginlägg ");
                 Console.WriteLine("3 - Sök tidigare blogginlägg ");
                 Console.WriteLine("4 - Avsluta programmet ");
+                Console.WriteLine("------------------------------\n");
                 string menuChoice = Console.ReadLine();
 
                 switch (menuChoice)
@@ -44,6 +41,7 @@ namespace Projekt_G6
                         BlogpostSearch();
                         break;
                     case "4":
+                        SavePostsToFile();
                         Console.WriteLine("Avslutar programmet - Tack och hej!");
                         menu = false;
                         break;
@@ -56,44 +54,13 @@ namespace Projekt_G6
         }
         private static void Blogpost()
         {
-
-            CreatePost();
-
-            //Tar alla blogposter och konverterar till json för att sedan spara det till filen.
-            var jsonData = ConvertToJson(posts);
-            WriteAllText(jsonData);
-            ReadJsonFromFile();
-        }
-        private static void BlogpostList()
-        {   
-
-            if(objs.Count > 0)
-            {
-                ReadJsonFromFile();
-            }
-            
-            //Om posts är tom, dvs man har inte skapat några inlägg, får man meddelande om det.
-            //Annars skrivs alla tidigare inlägg ut.
-            if (posts.Count == 0)
-            {
-                Console.WriteLine("Du har inga sparade inlägg. ");
-            }
-            else
-            {
-                posts.ForEach(Console.WriteLine);
-            }
-        }
-        private static void BlogpostSearch()
-        {
-            string search = Console.ReadLine();
-
-            int i = posts.FindIndex(x => x.Title.Contains(search));
-            Console.WriteLine(posts[i]);
-        }
-        private static void CreatePost()
-        {
             Console.Clear();
-
+            Console.WriteLine("\n-----------------------------------------------------------------INSTRUKTIONER-----------------------------------------------------------------");
+            Console.WriteLine("- Datum sätts automatiskt med dagens datum och nuvarande tid. ");
+            Console.WriteLine("- Ange rubrik och tryck enter. ");
+            Console.WriteLine("- Skriv ditt inlägg. OBS! För att skapa en radbrytning, tryck enter en gång. För nytt stycke, tryck enter en gång, mellanslag och enter igen. ");
+            Console.WriteLine("- För att avsluta inlägget, tryck enter två gånger. ");
+            Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------------------------- \n");
             BlogPost post = new BlogPost();
 
             DateTime date = DateTime.Now;
@@ -106,11 +73,58 @@ namespace Projekt_G6
             post.Title = Console.ReadLine();
 
             Console.WriteLine("Inlägg: ");
-            post.Content = Console.ReadLine();
 
-            posts.Add(post);
+            //Funktion för radbrytning och nytt stycke.
+            //Så länge användaren matar in något kommer det addas till string content.
+            //För att få radbrytning trycker användaren enter en gång = ny rad.
+            //För att göra nytt stycke, kan man ange t.ex. mellanslag följt av enter = ny tom rad.
+            //För att avsluta inlägget gör man enter två gånger (dvs, String.IsNullOrEmpty blir sant) 
+            string line;
+            string content = "";
+            while(!String.IsNullOrEmpty(line = Console.ReadLine()))
+            {
+                content = content + "\n" + line; 
+            }
 
-            Console.WriteLine(post);
+            post.Content = content;
+
+            Posts.Add(post);
+
+            Console.WriteLine("Ditt inlägg är nu skapat. ");
+        }
+        private static void BlogpostList()
+        {   
+            Console.Clear();
+            
+            //Om posts är tom, dvs man har inte skapat några inlägg, får man meddelande om det.
+            //Annars skrivs alla tidigare inlägg ut.
+            if (Posts.Count == 0)
+            {
+                Console.WriteLine("Du har inga sparade inlägg. ");
+            }
+            else
+            {
+                Console.WriteLine("Här är alla dina inlägg.\n ");
+                Posts.ForEach(Console.WriteLine);
+            }
+        }
+        private static void BlogpostSearch()
+        {
+            Console.Clear();
+            Console.WriteLine("Sök efter inlägg med hjälp av rubrik. ");
+            Console.Write("Ange rubik: ");
+            string search = Console.ReadLine();
+
+            List<BlogPost> searchresult = Posts.FindAll(x => x.Title.ToUpper().Contains(search.ToUpper()));
+            
+            if(searchresult.Count == 0)
+            {
+                Console.WriteLine("Hittar inget sådant inlägg. ");
+            }
+            else 
+            {
+                searchresult.ForEach(Console.WriteLine);
+            }
         }
         //Skapar upp filen om den inte finns, annars läser vad som finns i den.
         static void CreateOrReadFile()
@@ -119,6 +133,7 @@ namespace Projekt_G6
 
             if (!File.Exists(path))
             {
+                Posts = new List<BlogPost>();
                 using (FileStream fs = File.Create(path))
                 {
                     fs.Close();
@@ -126,25 +141,19 @@ namespace Projekt_G6
             }
             else
             {
-                ReadJsonFromFile();
-
-                //Addar innehållet från filen till posts.
-                if (posts.Count == 0) 
-                {
-                    objs.ForEach(posts.Add);
-                }
+                Posts = ReadJsonFromFile();
             }
         }
 
         //Inspiration till Json-serialisering och -deserialisering kommer från Föreläsning 11 med Thomas.
         //Läser filen och lägger in inläggen i listan objs.
-        static void ReadJsonFromFile()
+        static List<BlogPost> ReadJsonFromFile()
         {
             string path = "SavedBlogPosts.json";
 
             string json = File.ReadAllText(path);
 
-            objs = JsonSerializer.Deserialize<List<BlogPost>>(json);
+            return JsonSerializer.Deserialize<List<BlogPost>>(json);
         }
         //Serialiserar till Json
         static string ConvertToJson(List<BlogPost> data)
@@ -156,6 +165,11 @@ namespace Projekt_G6
         {
             string path = "SavedBlogPosts.json";
             File.WriteAllText(path, text);
+        }
+        static void SavePostsToFile()
+        {
+            var jsonData = ConvertToJson(Posts);
+            WriteAllText(jsonData);
         }
     }
 }
