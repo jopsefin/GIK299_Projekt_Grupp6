@@ -8,8 +8,11 @@ namespace Projekt_G6
     {
         static List<BlogPost> Posts;
         static void Main(string[] args)
-        {
-            Console.WriteLine("Hej och välkommen till Blogg-verktyget! ");
+        {   
+            Console.Clear();
+            Console.WriteLine("Hej och välkommen till Grupp 6 Blogg-verktyg! ");
+            Console.WriteLine("Detta verktyg har skapats av Edvin Owetz, Josefin Karlsson och Mikael Olsson.");
+            Console.WriteLine("Det har gjorts som en del av kursen GIK299.\n");
             Console.WriteLine("Välj i menyn vad du vill göra genom att ange siffran för ditt val följt av enter.\n ");
  
             CreateOrReadFile();
@@ -27,6 +30,7 @@ namespace Projekt_G6
                 Console.WriteLine("3 - Sök tidigare blogginlägg ");
                 Console.WriteLine("4 - Avsluta programmet ");
                 Console.WriteLine("------------------------------\n");
+                Console.Write("Ange val: ");
                 string menuChoice = Console.ReadLine();
 
                 switch (menuChoice)
@@ -47,7 +51,9 @@ namespace Projekt_G6
                         break;
                     default:
                         Console.Clear();
-                        Console.WriteLine("Du måste ange en siffra mellan 1-4, försök igen! ");
+                        Console.WriteLine("-------------------FEL MENYVAL----------------------");
+                        Console.WriteLine("  Du måste ange en siffra mellan 1-4, försök igen! ");
+                        Console.WriteLine("----------------------------------------------------\n");
                         break;
                 }
             }
@@ -75,7 +81,7 @@ namespace Projekt_G6
             Console.WriteLine("Inlägg: ");
 
             //Funktion för radbrytning och nytt stycke.
-            //Så länge användaren matar in något kommer det addas till string content.
+            //Så länge användaren matar in något kommer det addas till content tillsammans med \n.
             //För att få radbrytning trycker användaren enter en gång = ny rad.
             //För att göra nytt stycke, kan man ange t.ex. mellanslag följt av enter = ny tom rad.
             //För att avsluta inlägget gör man enter två gånger (dvs, String.IsNullOrEmpty blir sant) 
@@ -90,7 +96,9 @@ namespace Projekt_G6
 
             Posts.Add(post);
 
-            Console.WriteLine("Ditt inlägg är nu skapat. ");
+            Console.WriteLine("--------NYTT INLÄGG---------");
+            Console.WriteLine("  Ditt inlägg är nu skapat! ");
+            Console.WriteLine("----------------------------");
         }
         private static void BlogpostList()
         {   
@@ -100,33 +108,46 @@ namespace Projekt_G6
             //Annars skrivs alla tidigare inlägg ut.
             if (Posts.Count == 0)
             {
-                Console.WriteLine("Du har inga sparade inlägg. ");
+                Console.WriteLine("--------VISA INLÄGG---------");
+                Console.WriteLine(" Du har inga sparade inlägg ");
+                Console.WriteLine("----------------------------\n");
+                
             }
             else
             {
-                Console.WriteLine("Här är alla dina inlägg.\n ");
+                Console.WriteLine("--------VISA INLÄGG---------");
+                Console.WriteLine("  Här är alla dina inlägg ");
+                Console.WriteLine("----------------------------\n");
                 Posts.ForEach(Console.WriteLine);
             }
         }
         private static void BlogpostSearch()
         {
             Console.Clear();
-            Console.WriteLine("Sök efter inlägg med hjälp av rubrik. ");
-            Console.Write("Ange rubik: ");
+            Console.WriteLine("-----------SÖKA EFTER INLÄGG----------");
+            Console.WriteLine(" Sök efter inlägg med hjälp av rubrik ");
+            Console.WriteLine("--------------------------------------\n");
+            Console.Write("Ange sökord: ");
             string search = Console.ReadLine();
 
+            //Sätter search samt Title till versaler så att sökningen inte är case sensitive.
+            //Alla inlägg vars rubrik innehåller sökordet läggs till i listan searchresult.
+            //Finns inget inlägg med sökordet, får man meddelande om detta. Annars listas alla inlägg vars rubrik innehåller sökordet.
             List<BlogPost> searchresult = Posts.FindAll(x => x.Title.ToUpper().Contains(search.ToUpper()));
             
             if(searchresult.Count == 0)
             {
-                Console.WriteLine("Hittar inget sådant inlägg. ");
+                Console.WriteLine("\n------------SÖKRESULTAT--------------");
+                Console.WriteLine("  Inga rubriker innehåller sökordet ");
+                Console.WriteLine("-------------------------------------\n");
             }
             else 
             {
+                Console.WriteLine("\n------------SÖKRESULTAT--------------\n");
                 searchresult.ForEach(Console.WriteLine);
             }
         }
-        //Skapar upp filen om den inte finns, annars läser vad som finns i den.
+        //Skapar upp filen om den inte finns, annars läser vad som finns i den och lägger till i Posts.
         static void CreateOrReadFile()
         {
             string path = "SavedBlogPosts.json";
@@ -161,11 +182,13 @@ namespace Projekt_G6
             string json = JsonSerializer.Serialize(data);
             return json;
         }
+        //Skriver till fil.
         static void WriteAllText(string text)
         {
             string path = "SavedBlogPosts.json";
             File.WriteAllText(path, text);
         }
+        //Tar innehållet i Posts, konverterar till jsonData och skriver till filen.
         static void SavePostsToFile()
         {
             var jsonData = ConvertToJson(Posts);
