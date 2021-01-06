@@ -11,7 +11,7 @@ namespace Projekt_G6
 
         public override string ToString()
         {
-            return $"Datum: {Date.ToString("yyyy-MM-dd")} Tid: {Date.ToString("hh:mm")}\nRubrik: {Title}\n{Content}\n";
+            return $"Datum: {Date.ToString("yyyy-MM-dd")} Tid: {Date.ToString("HH:mm")}\nRubrik: {Title}\n{Content}\n";
         }
     }
 }
