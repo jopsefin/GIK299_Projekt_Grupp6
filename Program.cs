@@ -7,6 +7,7 @@ namespace Projekt_G6
     class Program
     {
         static List<BlogPost> Posts;
+        static string path = "SavedBlogPosts.json";
         static void Main(string[] args)
         {   
             Console.Clear();
@@ -144,14 +145,18 @@ namespace Projekt_G6
             else 
             {
                 Console.WriteLine("\n------------SÖKRESULTAT--------------\n");
-                searchresult.ForEach(Console.WriteLine);
+
+                int index = 1;
+                foreach (BlogPost x in searchresult)
+                {
+                    Console.WriteLine("{0} - {1}", index, x.Title);
+                    index++;
+                }
             }
         }
         //Skapar upp filen om den inte finns, annars läser vad som finns i den och lägger till i Posts.
-        static void CreateOrReadFile()
+        private static void CreateOrReadFile()
         {
-            string path = "SavedBlogPosts.json";
-
             if (!File.Exists(path))
             {
                 Posts = new List<BlogPost>();
@@ -168,28 +173,25 @@ namespace Projekt_G6
 
         //Inspiration till Json-serialisering och -deserialisering kommer från Föreläsning 11 med Thomas.
         //Läser filen och lägger in inläggen i listan objs.
-        static List<BlogPost> ReadJsonFromFile()
+        private static List<BlogPost> ReadJsonFromFile()
         {
-            string path = "SavedBlogPosts.json";
-
             string json = File.ReadAllText(path);
-
+            
             return JsonSerializer.Deserialize<List<BlogPost>>(json);
         }
         //Serialiserar till Json
-        static string ConvertToJson(List<BlogPost> data)
+        private static string ConvertToJson(List<BlogPost> data)
         {
             string json = JsonSerializer.Serialize(data);
             return json;
         }
         //Skriver till fil.
-        static void WriteAllText(string text)
+        private static void WriteAllText(string text)
         {
-            string path = "SavedBlogPosts.json";
             File.WriteAllText(path, text);
         }
         //Tar innehållet i Posts, konverterar till jsonData och skriver till filen.
-        static void SavePostsToFile()
+        private static void SavePostsToFile()
         {
             var jsonData = ConvertToJson(Posts);
             WriteAllText(jsonData);
