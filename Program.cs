@@ -155,13 +155,28 @@ namespace Projekt_G6
                 Console.WriteLine("Välj vilket inlägg du vill titta på genom att ange siffran för inlägget: ");
 
                 int choice;
- 
-                while (!Int32.TryParse(Console.ReadLine(), out choice))
+                int count = searchresult.Count;
+                bool num = true;
+                
+                while(num)
                 {
-                    Console.WriteLine("Du måste göra ett giltigt val. Försök igen.");
+                    if (Int32.TryParse(Console.ReadLine(), out choice))
+                    {
+                        if ((choice > 0 && choice < searchresult.Count+1 ))
+                        {
+                            Console.WriteLine("\nHär är inlägget du valde:\n{0}", searchresult[choice-1]);
+                            num = false;
+                        }
+                        else 
+                        {
+                            Console.WriteLine("Du måste göra ett giltigt val. Försök igen.");   
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Du måste göra ett giltig val. Försök igen.");
+                    }
                 }
-            
-                Console.WriteLine("\nHär är inlägget du valde:\n{0}", searchresult[choice-1]);
             }
         }
         //Skapar upp filen om den inte finns, annars läser vad som finns i den och lägger till i Posts.
