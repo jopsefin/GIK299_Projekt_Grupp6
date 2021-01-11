@@ -152,6 +152,16 @@ namespace Projekt_G6
                     Console.WriteLine("{0} - {1}", index, x.Title);
                     index++;
                 }
+                Console.WriteLine("Välj vilket inlägg du vill titta på genom att ange siffran för inlägget: ");
+
+                int choice;
+ 
+                while (!Int32.TryParse(Console.ReadLine(), out choice))
+                {
+                    Console.WriteLine("Du måste göra ett giltigt val. Försök igen.");
+                }
+            
+                Console.WriteLine("\nHär är inlägget du valde:\n{0}", searchresult[choice-1]);
             }
         }
         //Skapar upp filen om den inte finns, annars läser vad som finns i den och lägger till i Posts.
