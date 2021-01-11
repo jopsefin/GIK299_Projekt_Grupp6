@@ -144,33 +144,39 @@ namespace Projekt_G6
             }
             else 
             {
-                Console.WriteLine("\n------------SÖKRESULTAT--------------\n");
-
-                int index = 1;
-                foreach (BlogPost x in searchresult)
-                {
-                    Console.WriteLine("{0} - {1}", index, x.Title);
-                    index++;
-                }
-                Console.WriteLine("Välj vilket inlägg du vill titta på genom att ange siffran för inlägget: ");
-
-                int choice;
-                int count = searchresult.Count;
                 bool num = true;
                 
                 while(num)
                 {
+                    Console.WriteLine("\n------------SÖKRESULTAT--------------\n");
+
+                    int index = 1;
+                    foreach (BlogPost x in searchresult)
+                    {
+                        Console.WriteLine("{0} - {1}", index, x.Title);
+                        index++;
+                    }
+
+                    int choice;
+                
+                    Console.WriteLine("\nVälj vilket inlägg du vill titta på genom att ange siffran framför inlägget följt av enter eller välj 0 för att gå tillbaka till huvudmenyn: ");
+                    
                     if (Int32.TryParse(Console.ReadLine(), out choice))
                     {
                         if ((choice > 0 && choice < searchresult.Count+1 ))
                         {
-                            Console.WriteLine("\nHär är inlägget du valde:\n{0}", searchresult[choice-1]);
+                            Console.Clear();
+                            Console.WriteLine("Här är inlägget du valde att titta på:\n{0}", searchresult[choice-1]);
+                        }
+                        else if(choice == 0) 
+                        {
+                            Console.Clear();
                             num = false;
                         }
                         else 
                         {
                             Console.WriteLine("Du måste göra ett giltigt val. Försök igen.");   
-                        }
+                        }        
                     }
                     else
                     {
