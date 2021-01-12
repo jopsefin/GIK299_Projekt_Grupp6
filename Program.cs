@@ -166,7 +166,10 @@ namespace Projekt_G6
                         if ((choice > 0 && choice < searchresult.Count+1 ))
                         {
                             Console.Clear();
-                            Console.WriteLine("Här är inlägget du valde att titta på:\n{0}", searchresult[choice-1]);
+                            Console.WriteLine("--------------------------------------");
+                            Console.WriteLine("Här är inlägget du valde att titta på:");
+                            Console.WriteLine("--------------------------------------\n\n");
+                            Console.WriteLine("{0}", searchresult[choice-1]);
                         }
                         else if(choice == 0) 
                         {
